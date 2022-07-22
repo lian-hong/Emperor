@@ -1,17 +1,16 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
+import getters from './getters'
+import user from './modules/user'
+import menu from './modules/menu'
+import tagsView from './modules/tagsView'
+import loading from './modules/loading'
 
-Vue.use(Vuex)
-
-export default new Vuex.Store({
-  state: {
-  },
-  getters: {
-  },
-  mutations: {
-  },
-  actions: {
-  },
+export default createStore({
   modules: {
-  }
+    user,
+    menu,
+    tagsView,
+    loading
+  },
+  getters
 })

@@ -1,22 +1,32 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-
-Vue.use(VueRouter)
+import { createRouter, createWebHashHistory } from 'vue-router'
 
 const routes = [
   {
-    path: '/',
+    path: '/login',
     name: 'login',
-    component: () => import('../views/login/index')
+    component: () => import('@/views/login')
   },
   {
-    path: '/index',
-    name: 'index',
-    component: () => import('../layout/index')
+    path: '/',
+    name: 'layout',
+    component: () => import('@/layout'),
+    children: [
+      {
+        path: '/404',
+        name: '404',
+        component: () => import('@/views/404')
+      }
+    ]
+  },
+  {
+    path: '/test',
+    name: 'test',
+    component: () => import('@/views/test.vue')
   }
 ]
 
-const router = new VueRouter({
+const router = createRouter({
+  history: createWebHashHistory(),
   routes
 })
 

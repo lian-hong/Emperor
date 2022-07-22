@@ -1,89 +1,92 @@
-/**
- * @author SongWenLong
- * @date 2022-07-11 12:46
- */
 import axios from 'axios'
-import loading from '@/utils/loading'
-import { Message } from 'view-design'
-import { _showErrorMsg } from '@/utils/ErrorMessage'
 import store from '@/store'
-
-let showMessage = false
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+import { Notification } from '@/utils/Notification'
+// 创建axios实例
 const instance = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
-  timeout: 6000
+  timeout: 5000
 })
+
 // 添加请求拦截器
 instance.interceptors.request.use(
-  function (config) {
-    // TODO 添加token
-    loading.nprogress.start()
+  (config) => {
+    NProgress.start()
+    store.dispatch('loading/openLoading')
     const token = store.getters.token
-    if (token) config.headers.token = token
+    if (token) {
+      config.headers.token = token
+    }
+    // 在发送请求之前做些什么
     return config
   },
-  function (error) {
+  (error) => {
+    NProgress.done()
+    store.dispatch('loading/endLoading')
     // 对请求错误做些什么
     return Promise.reject(error)
   }
 )
+
 // 添加响应拦截器
 instance.interceptors.response.use(
-  function (response) {
+  (response) => {
+    NProgress.done()
+    store.dispatch('loading/endLoading')
     // 对响应数据做点什么
-    // loading.elLoading.done()
-    loading.nprogress.done()
     const {
-      data: { code, data, msg }
+      status,
+      data: { msg, data }
     } = response
-    if (code === 200) {
-      showMessage && Message.success(msg)
+    if (status === 200) {
       return data
-    } else {
-      _showErrorMsg(msg, code)
-      return Promise.reject(msg)
     }
+    Notification(msg)
+    return Promise.reject(msg)
   },
-  function (error) {
-    // 对响应错误做点什么
-    const msg = error.toString()
-    if (msg.includes('NetWork')) {
-      Message.error('网络错误，请检查您的网络！')
+  (error) => {
+    NProgress.done()
+    store.dispatch('loading/endLoading')
+    const { message } = error
+    if (message.includes('Network Error')) {
+      Notification('网络错误', '', 'error')
+      return Promise.reject(message)
     }
-    if (msg.includes('Timeout')) {
-      Message.error('请求超时，请检查您的网络！')
+    if (message.includes('timeout')) {
+      Notification('请求超时', '', 'error')
+      return Promise.reject(message)
     }
-    const { status } = error.response
+    const {
+      status,
+      data: { msg }
+    } = error.response
     switch (status) {
       case 401:
-        Message.error('Token超时,请重新登录！')
-        // TODO token过期处理
-        /* store.commit('user/loginOut')
-                  router.push({name: 'login'}) */
+        Notification('登录已过期，请重新登录', '', 'error')
+        break
+      case 403:
+        Notification('没有权限', '', 'error')
         break
       case 404:
-        Message.error('访问接口地址不正确！')
+        Notification('请求资源不存在', '', 'error')
         break
       case 500:
-        Message.error('服务器发生错误！')
+        Notification('服务器错误', '', 'error')
         break
-      case 503:
-        Message.error('服务暂时不可用！')
-        break
-      case 408:
-        Message.error('客户端请求超时!')
-        break
+      default:
+        Notification('', msg, 'error')
     }
+    // 对响应错误做点什么
     return Promise.reject(error)
   }
 )
 
-function request(optios, showMsg = false) {
-  showMessage = showMsg
-  if (optios.method.toLowerCase() === 'get') {
-    optios.params = optios.data || {}
-  }
-  return instance(optios)
+// 统一传参
+const request = (data) => {
+  data.params =
+    data.method.toLowerCase() === 'get' ? (data.params = data.data) : {}
+  return instance(data)
 }
 
 export default request

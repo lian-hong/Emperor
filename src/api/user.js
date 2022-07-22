@@ -1,31 +1,29 @@
 import request from '@/utils/request'
-
-// 登录
-const login = () => {
+/**
+ * 登录
+ */
+export const loginAPI = (data) => {
   return request({
-    url: '/admin/login',
+    url: '/login',
+    method: 'post',
+    data
+  })
+}
+/**
+ * 用户信息
+ */
+export const userInfoAPI = () => {
+  return request({
+    url: '/getinfo',
     method: 'POST'
   })
 }
-// 获取用户信息
-const getUserInfo = () => {
+/**
+ * 退出登录
+ */
+export const logoutAPI = () => {
   return request({
-    url: '/admin/getinfo',
+    url: '/logout',
     method: 'POST'
   })
-}
-// 退出
-
-const logout = () => {
-  return request({
-    url: '/admin/logout',
-    method: 'POST'
-  })
-}
-
-// 导出
-export default {
-  login,
-  getUserInfo,
-  logout
 }

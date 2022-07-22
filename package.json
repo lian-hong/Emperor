@@ -9,18 +9,22 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@commitlint/cli": "12.1.4",
+    "@commitlint/config-conventional": "12.1.4",
+    "@element-plus/icons-vue": "^2.0.6",
     "axios": "^0.27.2",
     "core-js": "^3.8.3",
-    "element-ui": "^2.15.9",
-    "vue": "^2.6.14",
-    "vue-router": "^3.5.1",
-    "vuex": "^3.6.2"
+    "echarts": "^5.3.3",
+    "element-plus": "^2.2.9",
+    "nprogress": "^0.2.0",
+    "screenfull": "^6.0.2",
+    "vue": "^3.2.13",
+    "vue-router": "^4.0.3",
+    "vuex": "^4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
     "@babel/eslint-parser": "^7.12.16",
-    "@commitlint/cli": "^12.1.4",
-    "@commitlint/config-conventional": "^12.1.4",
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-plugin-router": "~5.0.0",
@@ -36,8 +40,7 @@
     "husky": "^7.0.1",
     "lint-staged": "^11.1.2",
     "sass": "^1.32.7",
-    "sass-loader": "^12.0.0",
-    "vue-template-compiler": "^2.6.14"
+    "sass-loader": "^12.0.0"
   },
   "gitHooks": {
     "pre-commit": "lint-staged"
